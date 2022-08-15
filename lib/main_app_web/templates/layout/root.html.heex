@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <%= csrf_meta_tag() %>
+    <%= live_title_tag assigns[:page_title] || "Home", suffix: " · Linkerd Project" %>
+    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
+    <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
+  </head>
+  <body>
+    <header>
+      <section class="container">
+        <nav>
+          <ul>
+            <li>Login</li>
+          </ul>
+        </nav>
+        <div style="display: flex; flex-direction: row;">
+          <div class="promo-text" style="display: flex; flex-direction: column-reverse; justify-content: center;">
+            <div class="promo-text-top">
+              Linkerd
+            </div>
+            <div class="promo-text-bottom">
+              Linked. Everywhere.
+            </div>
+
+          </div>
+          <div class="promo-image" style="margin-right: 50px">
+            <img src={Routes.static_path(@conn, "/images/linkerd.png")} alt="Linkerd Logo" style="height:100px;"/>
+          </div>
+        </div>
+      </section>
+
+    </header>
+    <%= @inner_content %>
+  </body>
+</html>
