@@ -3,6 +3,5 @@ defmodule MainApp.Repo.Migrations.Unique_Username do
 
   def change do
     create unique_index(:operators, [:name])
-
   end
 end
