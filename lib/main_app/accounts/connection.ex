@@ -1,6 +1,7 @@
 defmodule MainApp.Accounts.Connection do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   alias MainApp.Accounts.Operator
   alias MainApp.Accounts.Connection
@@ -28,5 +29,16 @@ defmodule MainApp.Accounts.Connection do
     {:ok, connectionReturned} = Repo.insert(connection)
 
     connectionReturned
+  end
+
+  def delete_connection(email) do
+    id = Repo.one(from c in Connection, where: c.provider == "email" and c.uconnection1 == ^email, select: c.id)
+    if (!id) do
+      false
+    else
+      deletedConnection = Repo.get(Connection, id)
+      Repo.delete deletedConnection
+      true
+    end
   end
 end
