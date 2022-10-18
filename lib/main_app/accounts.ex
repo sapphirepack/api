@@ -91,7 +91,8 @@ defmodule MainApp.Accounts do
   def signup_operator(email, password) do
     if (!check_operator(email)) do
       operator = Operator.create_operator()
-      connection = Connection.create_connection(email, password)
+      passwordHash = Bcrypt.hash_pwd_salt(password)
+      connection = Connection.create_connection(email, passwordHash)
 
       Repo.get(Connection, connection.id)
       |> Repo.preload([:operator])
@@ -125,15 +126,20 @@ defmodule MainApp.Accounts do
 
   def login_operator(email, password) do
     if (check_operator(email)) do
-      operator  = Repo.one(from c in Connection,
+      [operator, passwordHash]  = Repo.one(from c in Connection,
                   where: c.provider == "email"
-                  and c.uconnection1 == ^email
-                  and c.uconnection2 == ^password,
-                  select: c.operator_id)
-      if (!operator) do
-        nil
+                  and c.uconnection1 == ^email,
+                  select: [c.operator_id, c.uconnection2])
+
+      if (Bcrypt.verify_pass(password, passwordHash)) do
+        if (!operator) do
+          nil
+        else
+          Repo.get(Operator, operator)
+        end
       else
-        Repo.get(Operator, operator)
+        Bcrypt.no_user_verify()
+        nil
       end
     else
       nil
