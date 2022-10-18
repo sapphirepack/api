@@ -1,4 +1,6 @@
 defmodule MainApp.Accounts do
+
+  alias MainApp.Accounts.Connection
   @moduledoc """
   The Accounts context.
   """
@@ -54,10 +56,6 @@ defmodule MainApp.Accounts do
     |> Operator.changeset(attrs)
     |> Repo.update()
   end
-
-  def connect_operator(attrs ) do
-    Operator.createOrJoin(attrs["name"], attrs["password_hash"])
-  end
   @doc """
   Deletes a operator.
 
@@ -85,5 +83,60 @@ defmodule MainApp.Accounts do
   """
   def change_operator(%Operator{} = operator, attrs \\ %{}) do
     Operator.changeset(operator, attrs)
+  end
+
+  """
+    Returns an operator after they've been created an assigned a connection via email.
+  """
+  def signup_operator(email, password) do
+    if (!check_operator(email)) do
+      operator = Operator.create_operator()
+      connection = Connection.create_connection(email, password)
+
+      Repo.get(Connection, connection.id)
+      |> Repo.preload([:operator])
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:operator, operator)
+      |> Repo.update()
+
+      operator
+    else
+      nil # We return nil if we didn't get the operator (that is operator already exists)
+
+    end
+  end
+
+  """
+    Checks to see if an operator connection exists via email
+    @return true if operator does exist and false otherwise
+  """
+  def check_operator(email) do
+    Repo.one(from c in Connection, where: c.provider == "email" and c.uconnection1 == ^email,  select: c.id)
+    |> return_operator_status
+  end
+
+  defp return_operator_status(nil) do
+    false
+  end
+
+  defp return_operator_status(_) do
+    true
+  end
+
+  def login_operator(email, password) do
+    if (check_operator(email)) do
+      operator  = Repo.one(from c in Connection,
+                  where: c.provider == "email"
+                  and c.uconnection1 == ^email
+                  and c.uconnection2 == ^password,
+                  select: c.operator_id)
+      if (!operator) do
+        nil
+      else
+        Repo.get(Operator, operator)
+      end
+    else
+      nil
+    end
   end
 end

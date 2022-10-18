@@ -21,35 +21,11 @@ defmodule MainApp.Accounts.Operator do
     |> cast(attrs, [:name])
   end
 
-  def createOrJoin(name, password) do
-    false
-  end
+  def create_operator() do
+    operator = Operator.changeset(%Operator{})
 
-  defp createifnotexist(nil, name) do
-    Operator.changeset(%Operator{}, %{ name: name} )
-    |> Repo.insert()
-  end
+    {:ok, operatorReturned} = Repo.insert(operator)
 
-  defp createifnotexist(operator , _name, _password) do
-    {:ok, operator}
-  end
-
-  defp checkpass({:error, reason}, _ ) do
-    Bcrypt.dummy_checkpw()
-    {:reason, reason}
-  end
-
-  defp checkpass({:ok, operator}, password) do
-    validpass = Bcrypt.checkpw(password, operator.password_hash)
-    validpass
-    |> returnvalue({:ok, operator}, {:error, "Incorrect password"})
-  end
-
-  defp returnvalue(true, success, _fail) do
-    success
-  end
-
-  defp returnvalue(false, _success, fail) do
-    fail
+    operatorReturned
   end
 end
