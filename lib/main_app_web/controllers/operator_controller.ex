@@ -4,29 +4,15 @@ defmodule MainAppWeb.OperatorController do
   alias MainApp.Accounts
   alias MainApp.Accounts.Operator
 
-  def new(conn, _params) do
-    changeset = Accounts.change_operator(%Operator{})
-    render(conn, "new.html", changeset: changeset)
+  def new(conn, %{"handle" => handle, "server_key" => server_key}) do
+    operator = Accounts.signup_operator(handle, server_key)
+    case operator do
+      nil -> conn |> put_status(:unprocessable_entity) |> html("")
+      %Operator{} -> conn |> put_status(:ok) |> html("")
+    end
   end
 
-  def create(conn, %{"operator" => operator_params}) do
-    case Accounts.connect_operator(operator_params) do
-      {:ok, operator} ->
-        conn
-        |> put_session(:current_user_id, operator.uuid)
-        |> put_flash(:info, "Signed up successfully.")
-        |> redirect(to: Routes.page_path(conn, :index))
-
-      {_error, %Ecto.Changeset{} = changeset} ->
-        require IEx
-        IEx.pry
-        render(conn, "new.html", changeset: changeset)
-
-      {:error, "Incorrect password"} ->
-        changeset = Accounts.change_operator(%Operator{})
-        conn
-        |> put_flash(:info, "Incorrect password.")
-        |> render("new.html", changeset: changeset)
-    end
+  def new(conn, _params) do
+    conn |> put_status(:unprocessable_entity) |> html("")
   end
 end

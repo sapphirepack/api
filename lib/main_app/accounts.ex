@@ -88,7 +88,7 @@ defmodule MainApp.Accounts do
   """
     Returns an operator after they've been created an assigned a connection via email.
   """
-  @spec signup_operator(String, String) :: Operator | nil
+  @spec signup_operator(String, String) :: %Operator{} | nil
   def signup_operator(email, password) do
     if (!check_operator(email)) do
       operator = Operator.create_operator()

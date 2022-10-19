@@ -23,9 +23,12 @@ defmodule MainAppWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", MainAppWeb do
-  #   pipe_through :api
-  # end
+  scope "/api/20220720", MainAppWeb do
+    pipe_through :api
+
+    post "/new", OperatorController, :new
+
+  end
 
   # Enables LiveDashboard only for development
   #

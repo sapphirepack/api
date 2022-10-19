@@ -14,7 +14,7 @@ Creates a new operator
 Response:
 
 200 -> Success
-422 -> Missing a field or improper field
+422 -> Missing a field or improper field or already exists
 
 ---
 
