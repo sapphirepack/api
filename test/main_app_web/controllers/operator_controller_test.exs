@@ -46,4 +46,13 @@ defmodule MainAppWeb.OperatorControllerTest do
     assert String.length(Poison.decode!(response1.resp_body)["refresh_token"]) == 88
     assert Enum.count(Poison.decode!(response1.resp_body)) == 2
   end
+
+  test 'reject connection with incorrect password' do
+    conn = conn(:post, "/api/20220720/new", [handle: "mainaccount@example.org", server_key: "password"])
+    _response = Router.call(conn, @opts)
+
+    conn = conn(:post, "/api/20220720/connect", [handle: "mainaccount@example.org", server_key: "badpassword"])
+    response1 = Router.call(conn, @opts)
+    assert response1.status == 422
+  end
 end
