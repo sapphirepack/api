@@ -9,6 +9,7 @@ defmodule MainApp.Accounts do
   alias MainApp.Repo
 
   alias MainApp.Accounts.Operator
+  alias MainApp.Accounts.Connection
 
   @doc """
   Returns the list of operators.
@@ -85,7 +86,7 @@ defmodule MainApp.Accounts do
     Operator.changeset(operator, attrs)
   end
 
-  """
+  @doc """
     Returns an operator after they've been created an assigned a connection via email.
   """
   @spec signup_operator(String, String) :: %Operator{} | nil
@@ -108,7 +109,7 @@ defmodule MainApp.Accounts do
     end
   end
 
-  """
+  @doc """
     Checks to see if an operator connection exists via email
     @return true if operator does exist and false otherwise
   """
@@ -133,7 +134,9 @@ defmodule MainApp.Accounts do
                   select: [c.operator_id, c.uconnection2])
 
       if (Bcrypt.verify_pass(password, passwordHash)) do
-        if (!operator) do
+        if (!operator) do # should never occur since
+                          # this indicates that the operator
+                          # wasn't linked to a connection
           nil
         else
           Repo.get(Operator, operator)

@@ -8,7 +8,9 @@
 import Config
 
 config :main_app,
-  ecto_repos: [MainApp.Repo]
+  ecto_repos: [MainApp.Repo],
+  access_token_time: 3600, # 1 hour in seconds
+  refresh_token_time: 2592000 # 1 month (30 days) in seconds
 
 # Configures the endpoint
 config :main_app, MainAppWeb.Endpoint,

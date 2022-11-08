@@ -3,6 +3,7 @@ defmodule MainAppWeb.OperatorController do
 
   alias MainApp.Accounts
   alias MainApp.Accounts.Operator
+  alias MainApp.Session
 
   def new(conn, %{"handle" => handle, "server_key" => server_key}) do
     operator = Accounts.signup_operator(handle, server_key)
@@ -13,6 +14,20 @@ defmodule MainAppWeb.OperatorController do
   end
 
   def new(conn, _params) do
+    conn |> put_status(:unprocessable_entity) |> html("")
+  end
+
+  def login(conn, %{"handle" => handle,"server_key" => server_key}) do
+    operator = Accounts.login_operator(handle, server_key)
+    case operator do
+      nil -> conn |> put_status(:unprocessable_entity) |> html("")
+
+      %Operator{} -> conn |> render("index.json", Session.login(operator))
+    end
+
+  end
+
+  def login(conn, _params) do
     conn |> put_status(:unprocessable_entity) |> html("")
   end
 end

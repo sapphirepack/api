@@ -27,6 +27,7 @@ defmodule MainAppWeb.Router do
     pipe_through :api
 
     post "/new", OperatorController, :new
+    post "/connect", OperatorController, :login
 
   end
 
