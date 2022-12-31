@@ -5,8 +5,8 @@ defmodule MainAppWeb.OperatorController do
   alias MainApp.Accounts.Operator
   alias MainApp.Session
 
-  def new(conn, %{"handle" => handle, "server_key" => server_key}) do
-    operator = Accounts.signup_operator(handle, server_key)
+  def new(conn, %{"handle" => handle, "server_key" => server_key, "salt" => salt}) do
+    operator = Accounts.signup_operator(handle, server_key, salt)
     case operator do
       nil -> conn |> put_status(:unprocessable_entity) |> html("")
       %Operator{} -> conn |> put_status(:ok) |> html("")

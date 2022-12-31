@@ -11,6 +11,7 @@ defmodule MainApp.Accounts.Connection do
     field(:provider, :string)
     field(:uconnection1, :string)
     field(:uconnection2, :string)
+    field(:uconnection3, :string)
 
     belongs_to(:operator, Operator, type: :binary_id, references: :uuid)
 
@@ -19,12 +20,12 @@ defmodule MainApp.Accounts.Connection do
 
   def changeset(%Connection{} = connection, attrs \\ %{}) do
     connection
-    |> cast(attrs, [:provider, :uconnection1, :uconnection2])
-    |> validate_required([:provider, :uconnection1, :uconnection2])
+    |> cast(attrs, [:provider, :uconnection1, :uconnection2, :uconnection3])
+    |> validate_required([:provider, :uconnection1, :uconnection2, :uconnection3])
   end
 
-  def create_connection(email, password) do
-    connection = Connection.changeset(%Connection{},  %{ provider: "email", uconnection1: email, uconnection2: password})
+  def create_connection(email, password, salt) do
+    connection = Connection.changeset(%Connection{},  %{ provider: "email", uconnection1: email, uconnection2: password, uconnection3: salt})
 
     {:ok, connectionReturned} = Repo.insert(connection)
 

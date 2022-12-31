@@ -88,13 +88,15 @@ defmodule MainApp.Accounts do
 
   @doc """
     Returns an operator after they've been created an assigned a connection via email.
+
+    The email is string, the password and salt are both hexencoded.
   """
-  @spec signup_operator(String, String) :: %Operator{} | nil
-  def signup_operator(email, password) do
+  @spec signup_operator(String, String, String) :: %Operator{} | nil
+  def signup_operator(email, password, salt) do
     if (!check_operator(email)) do
       operator = Operator.create_operator()
       passwordHash = Bcrypt.hash_pwd_salt(password)
-      connection = Connection.create_connection(email, passwordHash)
+      connection = Connection.create_connection(email, passwordHash, salt)
 
       Repo.get(Connection, connection.id)
       |> Repo.preload([:operator])
