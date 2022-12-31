@@ -30,4 +30,12 @@ defmodule MainAppWeb.OperatorController do
   def login(conn, _params) do
     conn |> put_status(:unprocessable_entity) |> html("")
   end
+
+  def salt(conn, %{"handle" => handle}) do
+    saltRetrieved = Accounts.seed_operator(handle)
+    case saltRetrieved do
+      nil -> conn |> put_status(:not_found) |> html("")
+      _ -> conn |> render("salt.json", %{"salt": saltRetrieved})
+    end
+  end
 end

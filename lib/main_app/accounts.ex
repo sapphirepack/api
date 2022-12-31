@@ -151,4 +151,17 @@ defmodule MainApp.Accounts do
       nil
     end
   end
+
+  def seed_operator(email) do
+    if (check_operator(email)) do
+      seed = Repo.one(from c in Connection,
+              where: c.provider == "email"
+              and c.uconnection1 == ^email,
+              select: c.uconnection3)
+
+      seed
+    else
+      nil
+    end
+  end
 end

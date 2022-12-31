@@ -28,7 +28,7 @@ defmodule MainAppWeb.Router do
 
     post "/new", OperatorController, :new
     post "/connect", OperatorController, :login
-
+    post "/connect/salt", OperatorController, :salt
   end
 
   # Enables LiveDashboard only for development
